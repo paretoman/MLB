@@ -1,0 +1,49 @@
+function myFunction() {
+  a = {
+    rangeNames: "A3:A17",
+    rangeNamesAgainst: "B2:P2",
+    rangeTally: "B3:P17",
+    rangeOutNames: "B37:P51",
+    rangeOutNamesAgainst: "B36:P36",
+    rangeOutTally: "A37:A51"
+  }
+  doit(a)
+  a2 = {
+    rangeNames: "A20:A34",
+    rangeNamesAgainst: "B19:P19",
+    rangeTally: "B20:P34",
+    rangeOutNames: "B54:P68",
+    rangeOutNamesAgainst: "B53:P53",
+    rangeOutTally: "A54:A68"
+  }
+  doit(a2)
+}  
+
+function doit(a) {
+  var sheet = SpreadsheetApp.getActiveSheet();
+  var names = sheet.getRange(a.rangeNames).getValues();
+  var namesAgainst = sheet.getRange(a.rangeNamesAgainst).getValues();
+  var tally = sheet.getRange(a.rangeTally).getValues();
+  var iArray = []
+  var n = names.length
+  for (var i = 0; i < n; i++) {
+    iArray.push(i)
+  }
+  var ord = iArray.sort(function(a,b) {
+    return - Number(tally[a][b]) + Number(tally[b][a])
+  })
+  var ordTally = []
+  var ordNames = []
+  var ordNamesAgainst = []
+  for (var i = 0; i < n; i++) {
+    ordTally[i] = []
+    ordNames[i] = [names[ord[i]]]
+    ordNamesAgainst[i] = namesAgainst[0][ord[i]]
+    for (var j = 0; j < n; j++) {
+      ordTally[i][j] = tally[ord[i]][ord[j]]
+    }
+  }
+  sheet.getRange(a.rangeOutNames).setValues(ordTally);
+  sheet.getRange(a.rangeOutTally).setValues(ordNames);
+  sheet.getRange(a.rangeOutNamesAgainst).setValues([ordNamesAgainst]);
+}
